@@ -8,32 +8,87 @@
         <!-- /input-group -->
     </li>
     <li class="user-pro">
-        <a href="#" class="waves-effect"><img src="{{ asset('public/plugins/images/users/1.jpg') }}" alt="user-img" class="img-circle"> <span class="hide-menu">Prof. Steve Gection<span class="fa arrow"></span></span>
+        <a href="#" class="waves-effect"><img src="{{ asset('public/plugins/images/users/1.jpg') }}" alt="user-img" class="img-circle"> <span class="hide-menu">{{ Auth::user()->name }}<span class="fa arrow"></span></span>
         </a>
         <ul class="nav nav-second-level">
-            <li><a href="javascript:void(0)"><i class="ti-user"></i> My Profile</a></li>
-            <li><a href="javascript:void(0)"><i class="ti-email"></i> Inbox</a></li>
-            <li><a href="javascript:void(0)"><i class="ti-settings"></i> Account Setting</a></li>
-            <li><a href="login.html"><i class="fa fa-power-off"></i> Logout</a></li>
+            <li><a href='{{ route("logout") }}'><i class="fa fa-power-off"></i> Logout</a></li>
         </ul>
     </li>
     <li class="nav-small-cap m-t-10">--- Main Menu</li>
     <li> 
-        <a href="index.html" class="waves-effect"><i class="ti-dashboard p-r-10"></i> <span class="hide-menu">Dashboard</span></a> 
+        <a href="{{ url('/') }}" class="waves-effect"><i class="ti-dashboard p-r-10"></i><span class="hide-menu">Dashboard</span></a> 
     </li>
+
+    @if(strpos($acl_filter, 'bus.list') !== false)
     <li> 
-        <a href="javascript:void(0);" class="waves-effect"><i class="linea-icon linea-basic fa-fw text-danger" data-icon="7"></i> <span class="hide-menu text-danger"> User <span class="fa arrow"></span> </span></a>
+        <a href="javascript:void(0);" class="waves-effect"><i class="fa fa-truck p-r-10" data-icon="7"></i><span class="hide-menu">Master bus <span class="fa arrow"></span></a>
         <ul class="nav nav-second-level">
-            <li> <a href="{{ url('user') }}">User list</a> </li>
-            <li> <a href="{{ url('user/create') }}">Register</a> </li>
+            <li> <a href="{{ url('bus') }}">Bus list</a></li>
+        </ul>
+    </li>
+    @endif
+
+    @if(strpos($acl_filter, 'transaksi.list') !== false)
+    <li> 
+        <a href="javascript:void(0);" class="waves-effect"><i class="fa fa-file-archive-o p-r-10" data-icon="7"></i><span class="hide-menu">Transaksi <span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level">
+            <li> <a href="{{ url('transaksi') }}">Transaksi list</a></li>
+        </ul>
+    </li>
+    @endif
+
+    @if(strpos($acl_filter, 'accesscontrol.list') !== false)
+    <li> 
+        <a href="javascript:void(0);" class="waves-effect"><i class="fa fa-cogs p-r-10" data-icon="7"></i><span class="hide-menu">Access control <span class="fa arrow"></span> </span></a>
+        <ul class="nav nav-second-level">
+            <li> <a href="{{ url('accesscontrol') }}">Access control list</a> </li> 
             
         </ul>
     </li>
-    <!-- <li> <a href="javascript:void(0);" class="waves-effect"><i class="icon-envelope p-r-10"></i> <span class="hide-menu"> Mailbox <span class="fa arrow"></span><span class="label label-rouded label-danger pull-right">3</span></span></a>
+    @endif
+
+    @if(strpos($acl_filter, 'user.list') !== false)
+    <li> 
+        <a href="javascript:void(0);" class="waves-effect"><i class="icon-people p-r-10" data-icon="7"></i><span class="hide-menu">User <span class="fa arrow"></span> </span></a>
         <ul class="nav nav-second-level">
-            <li> <a href="inbox.html">Inbox</a></li>
+            <li> <a href="{{ url('user') }}">User list</a> </li>
+            
         </ul>
     </li>
+    @endif
+
+    @if(strpos($acl_filter, 'po.list') !== false)
+    <li> 
+        <a href="javascript:void(0);" class="waves-effect"><i class="fa fa-film p-r-10" data-icon="7"></i><span class="hide-menu">Master PO <span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level">
+            <li> <a href="{{ url('po') }}">PO list</a></li>
+        </ul>
+    </li>
+    @endif
+
+    @if(strpos($acl_filter, 'tipekursi.list') !== false)
+    <li> 
+        <a href="javascript:void(0);" class="waves-effect"><i class="fa fa-cube p-r-10" data-icon="7"></i><span class="hide-menu">Master tipe kursi <span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level">
+            <li> <a href="{{ url('tipekursi') }}">Tipe kursi list</a></li>
+        </ul>
+    </li>
+    @endif
+
+    
+
+    @if(strpos($acl_filter, 'customer.list') !== false)
+    <li> 
+        <a href="javascript:void(0);" class="waves-effect"><i class="fa fa-circle-thin p-r-10" data-icon="7"></i><span class="hide-menu">Customer <span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level">
+            <li> <a href="{{ url('customer') }}">Customer list</a></li>
+        </ul>
+    </li>
+    @endif
+
+    
+
+    <!-- 
     <li class="nav-small-cap m-t-10">--- Professional</li>
     <li> <a href="events.html" class="waves-effect"><i class="ti-calendar p-r-10"></i> <span class="hide-menu">Events</span></a> </li>
     <li> <a href="javascript:void(0);" class="waves-effect"><i class="icon-people p-r-10"></i> <span class="hide-menu"> Professors <span class="fa arrow"></span></span></a>
@@ -81,5 +136,6 @@
     <li> 
         <a href="widgets.html" class="waves-effect"><i data-icon="P" class="linea-icon linea-basic fa-fw"></i> <span class="hide-menu">Widgets</span></a> 
     </li> -->
-    <li><a href='{{ route("logout") }}' class="waves-effect"><i class="icon-logout fa-fw"></i> <span class="hide-menu">Log out</span></a></li>
+    <!-- <li><a href='{{ route("logout") }}' class="waves-effect"><i class="icon-logout fa-fw"></i> <span class="hide-menu">Log out</span></a></li> -->
+    
 </ul>

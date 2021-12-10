@@ -10,186 +10,6 @@ use App\Models\MasterSetting;
 
 class ApiHelper extends Controller
 {
-	public static function cLogin($param) 
-    {
-        $url = self::url_serverapi();
-        $url_msg   = MasterSetting::where('setting_name', 'urlerror_message')->first();
-        if(!$url_msg)
-        {
-            $msg = 'url error';
-        }else{
-            $msg = $url_msg->setting_value;
-        }
-
-        if(empty($url))
-        {
-            return json_encode(array('status' => 0, 'message' => $msg));
-        }
-
-        $url = $url."/login";
-
-        $headers = array();
-        $headers[]= "Content-Type: application/x-www-form-urlencoded";
-        $result = self::http_post($url,$param,$headers);
-
-        return $result;
-    } 
-
-    public static function cLogout($param) 
-    {
-        $url = self::url_serverapi();
-        $url_msg   = MasterSetting::where('setting_name', 'urlerror_message')->first();
-        if(!$url_msg)
-        {
-            $msg = 'url error';
-        }else{
-            $msg = $url_msg->setting_value;
-        }
-
-        if(empty($url))
-        {
-            return json_encode(array('status' => 0, 'message' => $msg));
-        }
-
-        $url = $url."/logout";
-
-        $headers = array();
-        $headers[]= "Content-Type: application/x-www-form-urlencoded";
-        $result = self::http_post($url,$param,$headers);
-
-        return $result;
-
-    } 
-
-    public static function cUserlist($param) 
-    {
-        $url = self::url_serverapi();
-        $url_msg   = MasterSetting::where('setting_name', 'urlerror_message')->first();
-        if(!$url_msg)
-        {
-            $msg = 'url error';
-        }else{
-            $msg = $url_msg->setting_value;
-        }
-
-        if(empty($url))
-        {
-            return json_encode(array('status' => 0, 'message' => $msg));
-        }
-
-        $url = $url."/user/list";
-
-        $headers = array();
-        $headers[]= "Content-Type: application/x-www-form-urlencoded";
-        $result = self::http_post($url,$param,$headers);
-
-        return $result;
-
-    } 
-
-    public static function cUserinsert($param) 
-    {
-        $url = self::url_serverapi();
-        $url_msg   = MasterSetting::where('setting_name', 'urlerror_message')->first();
-        if(!$url_msg)
-        {
-            $msg = 'url error';
-        }else{
-            $msg = $url_msg->setting_value;
-        }
-
-        if(empty($url))
-        {
-            return json_encode(array('status' => 0, 'message' => $msg));
-        }
-
-        $url = $url."/user/insert";
-
-        $headers = array();
-        $headers[]= "Content-Type: application/x-www-form-urlencoded";
-        $result = self::http_post($url,$param,$headers);
-
-        return $result;
-
-    } 
-
-    public static function cUserupdate($param) 
-    {
-        $url = self::url_serverapi();
-        $url_msg   = MasterSetting::where('setting_name', 'urlerror_message')->first();
-        if(!$url_msg)
-        {
-            $msg = 'url error';
-        }else{
-            $msg = $url_msg->setting_value;
-        }
-
-        if(empty($url))
-        {
-            return json_encode(array('status' => 0, 'message' => $msg));
-        }
-
-        $url = $url."/user/update";
-
-        $headers = array();
-        $headers[]= "Content-Type: application/x-www-form-urlencoded";
-        $result = self::http_post($url,$param,$headers);
-
-        return $result;
-
-    }
-
-     public static function cUserdelete($param) 
-    {
-        $url = self::url_serverapi();
-        $url_msg   = MasterSetting::where('setting_name', 'urlerror_message')->first();
-        if(!$url_msg)
-        {
-            $msg = 'url error';
-        }else{
-            $msg = $url_msg->setting_value;
-        }
-
-        if(empty($url))
-        {
-            return json_encode(array('status' => 0, 'message' => $msg));
-        }
-
-        $url = $url."/user/delete";
-
-        $headers = array();
-        $headers[]= "Content-Type: application/x-www-form-urlencoded";
-        $result = self::http_post($url,$param,$headers);
-
-        return $result;
-
-    }
-
-    public static function cUseredit($param) 
-    {
-        $url = self::url_serverapi();
-        $url_msg   = MasterSetting::where('setting_name', 'urlerror_message')->first();
-        if(!$url_msg)
-        {
-            $msg = 'url error';
-        }else{
-            $msg = $url_msg->setting_value;
-        }
-
-        if(empty($url))
-        {
-            return json_encode(array('status' => 0, 'message' => $msg));
-        }
-
-        $url = $url."/user/edit";
-
-        $headers = array();
-        $headers[]= "Content-Type: application/x-www-form-urlencoded";
-        $result = self::http_post($url,$param,$headers);
-
-        return $result;
-
-    }
 
     public static function url_serverapi()
     {
@@ -285,6 +105,62 @@ class ApiHelper extends Controller
         curl_close($ch);
         return $result;
     }
+
+    public static function cekUserAuth($email='')
+    {
+        $user = \App\Models\Login::where('email', $email)
+        ->where('ipaddress', $_SERVER['REMOTE_ADDR'])
+        ->whereNotNull('token')
+        ->whereNotNull('iv')
+        ->whereNotNull('key')
+        ->orderBy('id', 'desc')
+        ->first();
+
+        if($user)
+        {
+            $signature = self::get_signature($user->iv, $user->key);
+
+            $result = [
+                'status' => 1,
+                'message' => 'Sukses signature',
+                'data' => $user,
+                'signature' => $signature
+            ];
+        }else{
+            $result = [
+                'status' => 0,
+                'message' => 'Gagal signature'
+            ];
+        }
+
+        return $result;
+    }
+
+    public static function hitValidator($param=[], $url_validator='') 
+    {
+        $url = self::url_serverapi();
+        $url_msg   = MasterSetting::where('setting_name', 'urlerror_message')->first();
+        if(!$url_msg)
+        {
+            $msg = 'url error';
+        }else{
+            $msg = $url_msg->setting_value;
+        }
+
+        if(empty($url))
+        {
+            return json_encode(array('status' => 0, 'message' => $msg));
+        } 
+
+        $url = $url."/".$url_validator;
+
+        $headers = array();
+        $headers[]= "Content-Type: application/x-www-form-urlencoded";
+        $result = self::http_post($url,$param,$headers);
+
+        return $result;
+
+    } 
 
 
 }

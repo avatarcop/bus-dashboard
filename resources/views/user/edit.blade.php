@@ -40,6 +40,24 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-md-12" for="example-text">Access control</span></label>
+                    <div class="col-md-12">
+                        <select name="accesscontrol_id" class="form-control" required="">
+                          <option value="">Select</option>
+                        @if($data_acl)
+                          @foreach($data_acl as $row)
+                              @if($row->id == $data->accesscontrol_id)
+                                <option value="{{ $row->id }}" selected="">{{ $row->role_name }}</option>
+                              @else
+                                <option value="{{ $row->id }}">{{ $row->role_name }}</option>
+                              @endif
+                              
+                          @endforeach
+                        @endif
+                      </select>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-md-12" for="example-text">Password</span></label>
                     <div class="col-md-12">
                         <input type="password" value="{{ $data->password }}" maxlength="45" required="" id="password_reg" name="password_reg" class="form-control" placeholder="Password">
@@ -55,8 +73,8 @@
                 <input type="hidden" value="{{ $data->id }}" id="id" name="id">            
                 <input type="hidden" value="{{ $data->email }}" id="email_old" name="email_old">            
                 
-                <button type="submit" class="btn btn-inverse waves-effect waves-light">Submit</button>
                 <a href="{{url('user')}}" class="btn btn-info waves-effect waves-light m-r-10">Cancel</a>
+                <button type="submit" class="btn btn-inverse waves-effect waves-light">Submit</button>
             </form>    
         </div>
     </div>

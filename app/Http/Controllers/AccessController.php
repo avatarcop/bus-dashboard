@@ -10,7 +10,7 @@ use App\Http\Helpers\ApiHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-class UserController extends Controller
+class AccessController extends Controller
 {
 
     public function __construct()
@@ -18,9 +18,9 @@ class UserController extends Controller
         $this->middleware('auth');
     }
 
-    public function userlist()
+    public function accesscontrollist()
     {
-        $nama_api='user list';
+        $nama_api='accesscontrol list';
 
     	$email = Auth::user()->email;
         $cekAuth = ApiHelper::cekUserAuth($email);
@@ -34,7 +34,7 @@ class UserController extends Controller
                 "route" => Route::currentRouteName()
             ]; 
 
-            $url = 'user/list';
+            $url = 'accesscontrol/list';
 
             $result= ApiHelper::hitValidator($param, $url);
             $result = json_decode($result);
@@ -55,14 +55,14 @@ class UserController extends Controller
                     return redirect('/');
                 }
             }else{
-                Log::Info($nama_api. ' null');
+                Log::Info($nama_api. ' Terjadi kesalahan ');
                 $data = [];  
 
 			    $data = json_encode($data);      
-			    $data = json_decode($data); 
+			    $data = json_decode($data);   
 
                 session()->flash('gagal', 'Terjadi kesalahan');  
-                return redirect('/');   
+                return redirect('/');
             }
 
         }else{
@@ -71,15 +71,14 @@ class UserController extends Controller
             return redirect('login');
         } 
             
-    	return view('user.list', compact('data'));
+    	return view('accesscontrol.list', compact('data'));
     }
 
-
-    public function usercreate()
+    public function accesscontrolcreate()
     {
-        $nama_api='user create';
+        $nama_api='accesscontrol create';
 
-    	$email = Auth::user()->email;
+        $email = Auth::user()->email;
         $cekAuth = ApiHelper::cekUserAuth($email);
         $user = $cekAuth['data'];
         if($cekAuth['status'] == 1)
@@ -92,7 +91,7 @@ class UserController extends Controller
                 "route" => Route::currentRouteName()
             ]; 
 
-            $url = 'user/create';
+            $url = 'accesscontrol/create';
 
             $result= ApiHelper::hitValidator($param, $url);
             $result = json_decode($result);
@@ -101,7 +100,6 @@ class UserController extends Controller
             {
                 if($result->status == 1)
                 {
-                    Log::Info('data '.json_encode($result));
                     $data = $result->data;
                 }else{
                     Log::Info($nama_api. ' gagal '.json_encode($result));
@@ -120,12 +118,60 @@ class UserController extends Controller
             return redirect()->route('login');
         } 
             
-    	return view('user.create', compact('data'));
+        return view('accesscontrol.create', compact('data'));
     }
 
-    public function useredit($id)
+    public function accesscontrolinsert(Request $request)
     {
-        $nama_api='user edit';
+        $nama_api='accesscontrol insert';
+
+        $email = Auth::user()->email;
+        $cekAuth = ApiHelper::cekUserAuth($email);
+        if($cekAuth['status'] == 1)
+        {
+            // sukses cek auth
+            $param  = [
+                "email" => $cekAuth['data']['email'],
+                "token" => $cekAuth['data']['token'],
+                "signature" => $cekAuth['signature'],
+                "role_code" => $request->role_code,
+                "role_name" => $request->role_name,
+                "routelist" => $request->routelist,
+            ]; 
+
+            $url = 'accesscontrol/insert';
+
+            $result= ApiHelper::hitValidator($param, $url);
+            $result = json_decode($result);
+
+            if(isset($result->status))
+            {
+                if($result->status == 1)
+                {
+                    session()->flash('sukses', $result->message);
+                }else{
+                    Log::Info($nama_api. ' gagal '.json_encode($result));
+                    session()->flash('gagal', $result->message);  
+                    return redirect()->back(); 
+                }
+            }else{
+                Log::Info($nama_api. ' null');
+                session()->flash('gagal','Terjadi kesalahan');   
+                return redirect()->back(); 
+            }
+
+        }else{
+            Log::Info($nama_api. ' tidak berhak, harus register ulang '.$email);
+            Auth::logout();
+            return redirect()->route('login');
+        } 
+            
+        return redirect()->route('accesscontrol.list');
+    }
+
+    public function accesscontroledit($id)
+    {
+        $nama_api='accesscontrol edit';
 
         $email = Auth::user()->email;
         $cekAuth = ApiHelper::cekUserAuth($email);
@@ -141,7 +187,7 @@ class UserController extends Controller
                 "route" => Route::currentRouteName()
             ]; 
 
-            $url = 'user/edit';
+            $url = 'accesscontrol/edit';
 
             $result= ApiHelper::hitValidator($param, $url);
             $result = json_decode($result);
@@ -151,15 +197,15 @@ class UserController extends Controller
                 if($result->status == 1)
                 {
                     $data = $result->data;
-                    $data_acl = $result->data_acl;
+
                 }else{
                     Log::Info($nama_api. ' gagal '.json_encode($result));
-                    session()->flash('gagal', $result->message);  
+                    session()->flash('gagal', $result->message); 
                     return redirect()->back(); 
                 }
             }else{
                 Log::Info($nama_api. ' null');
-                session()->flash('gagal','Terjadi kesalahan'); 
+                session()->flash('gagal','Terjadi kesalahan');    
                 return redirect()->back(); 
             }
 
@@ -169,72 +215,16 @@ class UserController extends Controller
             return redirect()->route('login');
         } 
             
-        return view('user.edit', compact('user', 'data', 'data_acl'));
+        return view('accesscontrol.edit', compact('user', 'data'));
     }
 
-    public function userinsert(Request $request)
+    public function accesscontrolupdate(Request $request)
     {
-        $nama_api='user insert';
-
-    	$email = Auth::user()->email;
-        $cekAuth = ApiHelper::cekUserAuth($email);
-        if($cekAuth['status'] == 1)
-        {
-            // sukses cek auth
-            $param  = [
-                "email" => $cekAuth['data']['email'],
-                "token" => $cekAuth['data']['token'],
-                "signature" => $cekAuth['signature'],
-                "email_reg" => $request->email_reg,
-                "name_reg" => $request->name_reg,
-                "password_reg" => $request->password_reg,
-                "c_password_reg" => $request->c_password_reg,
-                "accesscontrol_id" => $request->accesscontrol_id,
-            ]; 
-
-            $url = 'user/insert';
-
-            $result= ApiHelper::hitValidator($param, $url);
-            $result = json_decode($result);
-
-            if(isset($result->status))
-            {
-                if($result->status == 1)
-                {
-                    session()->flash('sukses', $result->message);
-                    $user = new User;
-                    $user->name = $result->data->name;
-                    $user->email = $result->data->email;
-                    $user->password = $result->data->password;
-                    $user->acl = $result->acl;
-                    $user->acl_id = $$result->data->accesscontrol_id;
-                    $user->save();
-                }else{
-                    Log::Info($nama_api. ' gagal '.json_encode($result));
-                    session()->flash('gagal', $result->message);  
-                    return redirect()->back(); 
-                }
-            }else{
-                Log::Info($nama_api. ' null');
-                session()->flash('gagal','Terjadi kesalahan');
-                return redirect()->back();        
-            }
-
-        }else{
-            Log::Info($nama_api. ' tidak berhak, harus register ulang '.$email);
-            Auth::logout();
-            return redirect()->route('login');
-        } 
-            
-    	return redirect()->route('user.list');
-    }
-
-    public function userupdate(Request $request)
-    {
-        $nama_api='user update';
+        $nama_api='accesscontrol update';
 
         $email = Auth::user()->email;
         $cekAuth = ApiHelper::cekUserAuth($email);
+        $user = $cekAuth['data'];
         if($cekAuth['status'] == 1)
         {
             // sukses cek auth
@@ -242,15 +232,13 @@ class UserController extends Controller
                 "email" => $cekAuth['data']['email'],
                 "token" => $cekAuth['data']['token'],
                 "signature" => $cekAuth['signature'],
-                "email_reg" => $request->email_reg,
-                "name_reg" => $request->name_reg,
-                "password_reg" => $request->password_reg,
-                "c_password_reg" => $request->c_password_reg,
-                "accesscontrol_id" => $request->accesscontrol_id,
+                "role_code" => $request->role_code,
+                "role_name" => $request->role_name,
+                "routelist" => $request->routelist,
                 "id" => $request->id,
             ]; 
 
-            $url = 'user/update';
+            $url = 'accesscontrol/update';
 
             $result= ApiHelper::hitValidator($param, $url);
             $result = json_decode($result);
@@ -260,22 +248,30 @@ class UserController extends Controller
                 if($result->status == 1)
                 {
                     session()->flash('sukses', $result->message);
-                    $user = User::where('email', $request->email_old)->orderBy('id', 'desc')->first();
-                    $user->name = $result->data->name;
-                    $user->email = $result->data->email;
-                    $user->password = $result->data->password;
-                    $user->acl = $result->acl;
-                    $user->acl_id = $result->data->accesscontrol_id;
-                    $user->save();
+                    // update acl di dashboard
+                    $user = User::all();
+                    foreach ($user as $row) 
+                    {
+                        if($row->acl_id == $request->id)
+                        {
+                            Log::Info('Update acl '.$row->email);
+                            $updateacl = User::find($row->id);
+                            $updateacl->acl = $result->data->route_access_list;
+                            $updateacl->update();
+                        }
+                    }
+                    
+
                 }else{
                     Log::Info($nama_api. ' gagal '.json_encode($result));
-                    session()->flash('gagal', $result->message);   
-                    return redirect()->back();
+                    session()->flash('gagal', $result->message);  
+                    $data = $result->data;
+                    return view('accesscontrol.edit', compact('user', 'data'));
                 }
             }else{
                 Log::Info($nama_api. ' null');
-                session()->flash('gagal','Terjadi kesalahan');  
-                return redirect()->back();      
+                session()->flash('gagal','Terjadi kesalahan'); 
+                return redirect()->route('accesscontrol.list');
             }
 
         }else{
@@ -284,12 +280,12 @@ class UserController extends Controller
             return redirect()->route('login');
         } 
             
-        return redirect()->route('user.list');
+        return redirect()->route('accesscontrol.list');
     }
 
-    public function userdelete($id)
+    public function accesscontroldelete($id)
     {
-        $nama_api='user delete';
+        $nama_api='accesscontrol delete';
 
         $email = Auth::user()->email;
         $cekAuth = ApiHelper::cekUserAuth($email);
@@ -304,7 +300,7 @@ class UserController extends Controller
                 "route" => Route::currentRouteName()
             ]; 
 
-            $url = 'user/delete';
+            $url = 'accesscontrol/delete';
 
             $result= ApiHelper::hitValidator($param, $url);
             $result = json_decode($result);
@@ -313,12 +309,6 @@ class UserController extends Controller
             {
                 if($result->status == 1)
                 {
-                    $email = $result->data->email;
-                    $user = User::where('email', $email)->orderBy('id', 'desc')->first();
-                    if($user)
-                    {
-                        $user->delete();
-                    }
                     session()->flash('sukses', $result->message);  
                 }else{
                     Log::Info($nama_api. ' gagal '.json_encode($result));
@@ -336,8 +326,9 @@ class UserController extends Controller
         } 
             
         
-        return redirect()->route('user.list'); 
+        return redirect()->route('accesscontrol.list'); 
     }
+    
 
 
 }

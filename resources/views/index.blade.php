@@ -28,6 +28,24 @@ if(!$user)
             <hr>
             <div class="table-responsive">
                 WELCOME {{ $user->email }}
+                <div class="box box-primary">
+                     <div class="box-body">
+                         @if (Session::has('gagal'))
+                          <div class="alert alert-danger alert-dismissable">{{ Session::get('gagal') }} 
+                              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                          </div>
+                          @endif
+
+                      </div >
+                      <div class="box-body">
+
+                           @if (Session::has('sukses'))
+                          <div class="alert alert-success alert-dismissable">{{ Session::get('sukses') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                          </div>
+                          @endif
+                      </div >
+                </div>
             </div>
         </div>
     </div>

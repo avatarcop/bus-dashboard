@@ -20,10 +20,10 @@ function KonfirmasiDelete()
 
 <div class="row bg-title">
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-        <h4 class="page-title">User list</h4> </div>
+        <h4 class="page-title">Tipe kursi list</h4> </div>
     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
         <ol class="breadcrumb">
-            <li><a href="#">User</a></li>
+            <li><a href="#">Tipe kursi</a></li>
             <li class="active">List</li>
         </ol>
     </div>
@@ -33,7 +33,7 @@ function KonfirmasiDelete()
 <div class="row">
     <div class="col-sm-12">
         <div class="white-box">
-            <h3 class="box-title m-b-0">User list</h3>
+            <h3 class="box-title m-b-0">Tipe kursi list</h3>
             <hr>
             <div class="box box-primary">
                  <div class="box-body">
@@ -53,16 +53,17 @@ function KonfirmasiDelete()
                       @endif
                   </div >
             </div>
-            @if(strpos($acl_filter, 'user.create') !== false)
-            <a class="btn btn-primary" href="{{ url('user/create') }}">Add user</a><br><br>
+            @if(strpos($acl_filter, 'tipekursi.create') !== false)
+            <a class="btn btn-primary" href="{{ url('tipekursi/create') }}">Add tipekursi</a><br><br>
             @endif
             <div class="table-responsive">
                 <table id="myTable" width="100%" class="table table-striped">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Email</th>
+                            <th width="50">No</th>
+                            <th>Nama tipe kursi</th>
+                            <th>Total kursi</th>
+                            <th>Denah kursi</th>
                             <th>Action</th>
                             
                         </tr>
@@ -70,8 +71,9 @@ function KonfirmasiDelete()
                     <tfoot>
                         <tr>
                             <td></td>
-                            <th>Nama</th>
-                            <th>Email</th>
+                            <th>Nama tipe kursi</th>
+                            <th>Total kursi</th>
+                            <th>Denah kursi</th>
                             <th>Action</th>
                             
                         </tr>
@@ -82,15 +84,21 @@ function KonfirmasiDelete()
                             @foreach($data as $row)
                                 <tr>
                                     <td>{{ $x }}</td>
-                                    <td>{{ $row->name }}</td>
-                                    <td>{{ $row->email }}</td>
+                                    <td>{{ $row->nama_tipekursi }}</td>
+                                    <td>{{ $row->total_kursi }}</td>
                                     <td>
-                                      @if(strpos($acl_filter, 'user.edit') !== false)
-                                      <a class="btn btn-primary" href="{{ url('user/edit') }}/{{ $row->id }}">Edit</a>
+                                      <a href="{{ asset('storage/images') }}/{{ $row->denah_kursi }}" target="blank">
+                                      <img src="{{ asset('storage/images') }}/{{ $row->denah_kursi }}" style="max-width: 100px;height: auto">
+                                      </a>
+                                    </td>
+                                    
+                                    <td>
+                                      @if(strpos($acl_filter, 'tipekursi.edit') !== false)
+                                      <a class="btn btn-primary" href="{{ url('tipekursi/edit') }}/{{ $row->id }}">Edit</a>
                                       @endif
                                       &nbsp;&nbsp;&nbsp;
-                                      @if(strpos($acl_filter, 'user.delete') !== false)
-                                      <a onclick="return KonfirmasiDelete()" class="btn btn-danger" href="{{ url('user/delete') }}/{{ $row->id }}">Hapus</a>
+                                      @if(strpos($acl_filter, 'tipekursi.delete') !== false)
+                                      <a onclick="return KonfirmasiDelete()" class="btn btn-danger" href="{{ url('tipekursi/delete') }}/{{ $row->id }}">Hapus</a>
                                       @endif
                                     </td>
                                 </tr>
@@ -99,6 +107,10 @@ function KonfirmasiDelete()
                         @else
                             <tr>
                                 <td>Data tidak ditemukan</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -149,13 +161,13 @@ function KonfirmasiDelete()
               {
                   extend: 'excel',
                   messageTop: "Date: "+today,
-                  title: 'Daftar user'
+                  title: 'Daftar tipe kursi'
               },
               {
                   extend: 'pdf',
                   messageBottom: null,
                   messageTop: "Date: "+today,
-                  title: 'Daftar user'
+                  title: 'Daftar tipe kursi'
               },
               {
                   extend: 'print',
@@ -171,7 +183,7 @@ function KonfirmasiDelete()
                   },
                   messageBottom: null,
                   messageTop: "Date: "+today,
-                  title: 'Daftar user'
+                  title: 'Daftar tipe kursi'
               }
             ]
           

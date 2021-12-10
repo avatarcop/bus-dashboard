@@ -1,0 +1,4 @@
+CATATAN PERBAIKAN
+- validasi input logo_po, jpg|png
+- validasi unik column
+- jquery validate

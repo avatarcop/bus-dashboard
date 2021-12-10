@@ -40,6 +40,19 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-md-12" for="example-text">Access control</span></label>
+                    <div class="col-md-12">
+                        <select name="accesscontrol_id" class="form-control" required="">
+                          <option value="" selected="">Select</option>
+                        @if($data)
+                          @foreach($data as $row)
+                              <option value="{{ $row->id }}">{{ $row->role_name }}</option>
+                          @endforeach
+                        @endif
+                      </select>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-md-12" for="example-text">Password</span></label>
                     <div class="col-md-12">
                         <input type="password" required="" maxlength="45" required="" id="password_reg" name="password_reg" class="form-control" placeholder="Password">
@@ -52,8 +65,8 @@
                     </div>
                 </div>                
                 
-                <button type="submit" class="btn btn-inverse waves-effect waves-light">Submit</button>
                 <a href="{{url('user')}}" class="btn btn-info waves-effect waves-light m-r-10">Cancel</a>
+                <button type="submit" class="btn btn-inverse waves-effect waves-light">Submit</button>
             </form>    
         </div>
     </div>

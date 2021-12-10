@@ -34,32 +34,28 @@ class HomeController extends Controller
     {
         $nama_api='logout';
 
-        $user = Login::where('ipaddress', $_SERVER['REMOTE_ADDR'])
-        ->whereNotNull('token')
-        ->whereNotNull('iv')
-        ->whereNotNull('key')
-        ->orderBy('id', 'desc')
-        ->first();
-
-        if($user)
+        $email = Auth::user()->email;
+        $cekAuth = ApiHelper::cekUserAuth($email);
+        if($cekAuth['status'] == 1)
         {
-            $signature = ApiHelper::get_signature($user->iv, $user->key);
-        
+            // sukses cek auth
             $param  = [
-                "email" => $user->email,
-                "token" => $user->token,
-                "signature" => $signature,
+                "email" => $cekAuth['data']['email'],
+                "token" => $cekAuth['data']['token'],
+                "signature" => $cekAuth['signature'],
             ]; 
 
-            $result= ApiHelper::cLogout($param);
+            $url = 'logout';
+
+            $result= ApiHelper::hitValidator($param, $url);
             $result = json_decode($result);
 
             if(isset($result->status))
             {
                 if($result->status == 1)
                 {
-                    Log::Info('delete '.$user->id);
-                    $user = $user->delete();
+                    $user = Login::find($cekAuth['data']['id']);
+                    $user->delete();
 
                     Auth::logout();
                     return redirect('login');

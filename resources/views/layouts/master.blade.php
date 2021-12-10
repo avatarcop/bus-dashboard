@@ -2,13 +2,14 @@
 <html lang="en">
 
 <head>
+    <?php $acl_filter = Auth::user()->acl; ?>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('public/plugins/images/favicon.png') }}">
-    <title>Elite Admin - University Admin Dashboard</title>
+    <title>BUS</title>
     <!-- Bootstrap Core CSS -->
     <link href="{{ asset('public/assets/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Menu CSS -->
@@ -31,6 +32,15 @@
 
     <!-- datetime -->
     <link href="{{ asset('public/assets/datatable/js/datetime/jquery.datetimepicker.css') }}" rel="stylesheet">
+
+    <!-- upload gambar -->
+    <link rel="stylesheet" href="{{ asset('public/plugins/bower_components/dropify/dist/css/dropify.min.css') }}">
+
+    <!-- checkbox -->
+    <link href="{{ asset('public/plugins/bower_components/icheck/skins/all.css') }}" rel="stylesheet">
+
+    <!-- tags -->
+    <link href="{{ asset('public/plugins/bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css') }}" rel="stylesheet" />
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -38,22 +48,23 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
     <script>
-        (function (i, s, o, g, r, a, m) {
-            i['GoogleAnalyticsObject'] = r;
-            i[r] = i[r] || function () {
-                (i[r].q = i[r].q || []).push(arguments)
-            }, i[r].l = 1 * new Date();
-            a = s.createElement(o), m = s.getElementsByTagName(o)[0];
-            a.async = 1;
-            a.src = g;
-            m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-        ga('create', 'UA-19175540-9', 'auto');
-        ga('send', 'pageview');
+        // (function (i, s, o, g, r, a, m) {
+        //     i['GoogleAnalyticsObject'] = r;
+        //     i[r] = i[r] || function () {
+        //         (i[r].q = i[r].q || []).push(arguments)
+        //     }, i[r].l = 1 * new Date();
+        //     a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+        //     a.async = 1;
+        //     a.src = g;
+        //     m.parentNode.insertBefore(a, m)
+        // })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+        // ga('create', 'UA-19175540-9', 'auto');
+        // ga('send', 'pageview');
     </script>
 </head>
 
 <body>
+    
     <!-- Preloader -->
     <div class="preloader">
         <div class="cssload-speeding-wheel"></div>
@@ -114,9 +125,9 @@
 
     <!-- datatable -->
     <script src="{{ asset('public/assets/datatable/datatable/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('public/assets/datatable/jquery.validate.js') }}"></script>
-    <script src="{{ asset('public/assets/datatable/jquery.validate.min.js') }}"></script>
-    <script src="{{ asset('public/assets/datatable/additional-methods.js') }}"></script>
+    <script src="{{ asset('public/assets/datatable/datatable/jquery.validate.js') }}"></script>
+    <script src="{{ asset('public/assets/datatable/datatable/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('public/assets/datatable/datatable/additional-methods.js') }}"></script>
 
     <!-- export -->
  <!--    <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
@@ -137,6 +148,65 @@
 
     <!-- Datepicker -->
      <script src="{{ asset('public/assets/datatable/js/datetime/jquery.datetimepicker.full.js') }}"></script>
+
+     <!-- upload gambar -->
+     <script src="{{ asset('public/plugins/bower_components/dropify/dist/js/dropify.min.js') }}"></script>
+
+     <!-- checkbox -->
+     <script src="{{ asset('public/plugins/bower_components/icheck/icheck.min.js') }}"></script>
+     <script src="{{ asset('public/plugins/bower_components/icheck/icheck.init.js') }}"></script>
+
+     <!-- tags -->
+     <script src="{{ asset('public/plugins/bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function(){
+            // Basic
+            $('.dropify').dropify();
+
+            // Translated
+            $('.dropify-fr').dropify({
+                messages: {
+                    default: 'Glissez-déposez un fichier ici ou cliquez',
+                    replace: 'Glissez-déposez un fichier ou cliquez pour remplacer',
+                    remove:  'Supprimer',
+                    error:   'Désolé, le fichier trop volumineux'
+                }
+            });
+
+            // Used events
+            var drEvent = $('#input-file-events').dropify();
+
+            drEvent.on('dropify.beforeClear', function(event, element){
+                return confirm("Do you really want to delete \"" + element.file.name + "\" ?");
+            });
+
+            drEvent.on('dropify.afterClear', function(event, element){
+                alert('File deleted');
+            });
+
+            drEvent.on('dropify.errors', function(event, element){
+                console.log('Has Errors');
+            });
+
+            var drDestroy = $('#input-file-to-destroy').dropify();
+            drDestroy = drDestroy.data('dropify')
+            $('#toggleDropify').on('click', function(e){
+                e.preventDefault();
+                if (drDestroy.isDropified()) {
+                    drDestroy.destroy();
+                } else {
+                    drDestroy.init();
+                }
+            })
+        });
+
+        jQuery(document).ready(function () {
+              'use strict';
+
+              jQuery('#filter-date, #search-from-date, #search-to-date').datetimepicker();
+          });
+    </script>
 
     @stack('scripts')
 </body>
